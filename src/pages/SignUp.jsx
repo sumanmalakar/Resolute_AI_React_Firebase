@@ -4,7 +4,7 @@ import {Link, useNavigate} from 'react-router-dom';
 
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {db} from '../firebase.config'
-
+import { doc, serverTimestamp, setDoc, Timestamp } from "firebase/firestore"; 
 
 
 import {ReactComponent as ArrowRightIcon} from '../assets/svg/keyboardArrowRightIcon.svg'
@@ -44,6 +44,13 @@ const user = userCredential.user;
 updateProfile(auth.currentUser, {
   displayName: name,
 })
+
+const formDataCopy = {...formData}
+delete formDataCopy.password
+formDataCopy.timestamp = serverTimestamp()
+
+await setDoc(doc(db, 'users', user.uid), formDataCopy)
+
 
 // redirect to home
 navigate('/')
